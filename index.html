@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0050)https://blog.grush.jp/sample/jquery_highlight.html -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja" dir="ltr" xmlns:og="http://ogp.me/ns#" xmlns:mixi="http://mixi-platform.com/ns#"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Content-Language" content="ja">
+	
+  <title>文字チェッカー</title>
+	<script type="text/javascript" src="./jquery.js"></script>
+	<script type="text/javascript" src="./jquery.highlight-3.js"></script>
+
+	<style type="text/css">
+		
+		.highlight1 {
+			background-color:yellow;
+		}
+		.highlight2 {
+			background-color:#e2b2c0;
+		}
+		.highlight3 {
+			background-color:#addaff;
+		}
+		.highlight4 {
+			background-color:#e4ad6d;
+		}
+		.highlight5 {
+			background-color:#f768b4;
+		}
+		.highlight6 {
+			background-color:#dbe159;
+		}
+		.highlight7 {
+			background-color:#7fefca;
+		}
+		.highlight8 {
+			background-color:#f1aaff;
+		}
+		.highlight9 {
+			background-color:#eabf4c;
+		}
+		.highlight10 {
+			background-color:#f9e697;
+		}
+		.highlight11 {
+			background-color:#b3d3ac;
+		}
+		.highlight12 {
+			background-color:#eac7cd;
+		}
+
+    /* ここ以下はすべてカーソルの変更 */
+    /* https://qiita.com/7note/items/3c7829c1e25eea67a1e6 */
+    #target {
+      caret-color: red;   /* デフォルトの点滅カーソルを非表示 */
+      border: 1px solid #000;     /* textarea風に枠線を付ける */
+      border-radius: 3px;         /* textarea風に角丸を付ける */
+      padding: 2px 5px;           /* textarea風に余白を付ける */
+    }
+
+	</style>
+	
+	<script type="text/javascript">
+		
+		function doHighlight() {
+      $("#target").removeHighlight();
+
+      // 読み込んだjquery.highlight-3.jsを改造して、色を検索語ごとに変えれるようにした
+      let i = 1;
+
+      let color_variation_on = false;
+      if($("[name=color_variation_on]:checked").val() == '1'){
+        color_variation_on = true;
+      }
+
+      var words = $("#word").val().split(/[、\n]/);
+      words.forEach(function(element){
+        if (!element) { return; } //空文字は飛ばす
+        let color_num = String(i);
+        $("#target").highlight(element,color_num);
+        if(color_variation_on){
+          i = i + 1;
+          if(i > 12){ i = 1; }
+        }
+      });
+			
+		}
+		
+	</script>
+</head>
+<body>
+	<h2>文字チェッカー</h2>
+	<textarea id="word" rows="5" cols="40" placeholder="検索ワードを入力してください&#13;&#13;例：検索語１、検索語２&#13;検索語１&#13;検索語２"></textarea><br>
+  <br><input type="button" onclick="doHighlight()" value="入力された文字をハイライト">
+  　　<input type="checkbox" name="color_variation_on" value="1" style="transform:scale(1.5);">色を検索語ごとに変える（12色まで、12色以降はループ）<br>
+	<br>
+	<div id="target" contenteditable="true">
+		※ここに検索対象の全文を張り付けてね<br>
+    異動,総務部総務課総括主査＃総務部総務課総務係長,総務部総務課主査＃総務部人事局人事課主査,髙畠　知秀<br>
+    異動,環境生活部くらし安全局道民生活課女性支援室主査,宗谷総合振興局総務課総務係長,中出　香里<br>
+    昇任,函館児童相談所子ども支援課児童福祉司,函館児童相談所,杉木　智洋<br>
+
+		あいうえおかきくけこ<br>
+		漢字漢字漢字漢字漢字漢字<br>
+		abcdefg
+	</div>
+	
+	
+
+
+
+</body></html>
