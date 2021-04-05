@@ -46,7 +46,7 @@
 			background-color:#eac7cd;
 		}
 
-    /* ここ以下はすべてカーソルの変更 */
+    /* カーソルの変更 */
     /* https://qiita.com/7note/items/3c7829c1e25eea67a1e6 */
     #target {
       caret-color: red;   /* デフォルトの点滅カーソルを非表示 */
@@ -55,6 +55,22 @@
       padding: 2px 5px;           /* textarea風に余白を付ける */
     }
 
+    #word_area {
+      float: left;
+      margin-right: 20px;
+    }
+    #droppable {
+      float: left;
+      padding: 1em;      
+    }
+
+    /* ドラッグ中の色変えcss */
+    .noneactive {
+      border: gray solid 0.4em;
+    }    
+    .active {
+      border:  0.4em dotted orange;
+    }
 	</style>
 	
 	<script type="text/javascript">
@@ -70,7 +86,7 @@
         color_variation_on = true;
       }
 
-      var words = $("#word").val().split(/[、\n]/);
+      var words = $("#word").val().split(/[,\n]/);
       words.forEach(function(element){
         if (!element) { return; } //空文字は飛ばす
         let color_num = String(i);
@@ -82,12 +98,81 @@
       });
 			
 		}
+
+
+    // ファイルドラッグ関連の処理
+    // https://www.techscore.com/blog/2012/11/12/html5-%E3%81%AE-file-api-%E3%81%A7%E3%83%89%E3%83%A9%E3%83%83%E3%82%B0%EF%BC%86%E3%83%89%E3%83%AD%E3%83%83%E3%83%97%E3%81%99%E3%82%8B/
+    $(function() {
+
+      // ドラッグ中の色変える
+        $('#droppable').bind('dragover', onDragOver);
+        function onDragOver(e) {
+          e.preventDefault();
+          $('#droppable').removeClass("noneactive");
+          $('#droppable').addClass("active");
+        }
+        $('#droppable').bind('dragleave drop', onDragLeave);
+        function onDragLeave(e) {
+          e.preventDefault();
+          $('#droppable').removeClass("active");
+          $('#droppable').addClass("noneactive");
+        }
+
+        var droppable = $("#droppable");
+ 
+        // File API が使用できない場合は諦めます.
+        if(!window.FileReader) {
+          alert("File API がサポートされていません。");
+          return false;
+        }
+ 
+        // イベントをキャンセルするハンドラです.
+        var cancelEvent = function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        }
+ 
+        // dragenter, dragover イベントのデフォルト処理をキャンセルします.
+        droppable.bind("dragenter", cancelEvent);
+        droppable.bind("dragover", cancelEvent);
+ 
+        // ドロップ時のイベントハンドラを設定します.
+        var handleDroppedFile = function(event) {
+          // ファイルは複数ドロップされる可能性がありますが, ここでは 1 つ目のファイルを扱います.
+          var file = event.originalEvent.dataTransfer.files[0];
+ 
+          // ファイルの内容は FileReader で読み込みます.
+          var fileReader = new FileReader();
+          fileReader.onload = function(event) {
+            // event.target.result に読み込んだファイルの内容が入っています.
+            // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+            $("#droppable").text("[" + file.name + "]");
+            $("#word").text(event.target.result);
+          }
+          fileReader.readAsText(file);
+ 
+          // デフォルトの処理をキャンセルします.
+          cancelEvent(event);
+          return false;
+        }
+ 
+        // ドロップ時のイベントハンドラを設定します.
+        droppable.bind("drop", handleDroppedFile);
+      });
 		
 	</script>
 </head>
 <body>
 	<h2>文字チェッカー</h2>
-	<textarea id="word" rows="5" cols="40" placeholder="検索ワードを入力してください&#13;&#13;例：検索語１、検索語２&#13;検索語１&#13;検索語２"></textarea><br>
+  <div id ="word_area">
+	<textarea id="word" rows="7" cols="40" placeholder="検索ワードを入力してください&#13;&#13;例：検索語１,検索語２&#13;検索語１&#13;検索語２"></textarea>
+  </div>
+  　　
+  <div id="droppable" class="noneactive">
+    おまけ：ここに検索ワードファイルを<br>ドロップ可能※UTF-8形式のみ
+  </div>
+  <br><br><br><br>
   <br><input type="button" onclick="doHighlight()" value="入力された文字をハイライト">
   　　<input type="checkbox" name="color_variation_on" value="1" style="transform:scale(1.5);">色を検索語ごとに変える（12色まで、12色以降はループ）<br>
 	<br>
