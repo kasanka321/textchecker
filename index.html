@@ -55,13 +55,9 @@
       padding: 2px 5px;           /* textarea風に余白を付ける */
     }
 
-    #word_area {
-      float: left;
-      margin-right: 20px;
-    }
-    #droppable {
-      float: left;
-      padding: 1em;      
+    /* 並列にしたい親要素にflexを指定すると、横並びにできる */
+    #flex {
+      display: flex;
     }
 
     /* ドラッグ中の色変えcss */
@@ -165,14 +161,15 @@
 </head>
 <body>
 	<h2>文字チェッカー</h2>
-  <div id ="word_area">
-	<textarea id="word" rows="7" cols="40" placeholder="検索ワードを入力してください&#13;&#13;例：検索語１,検索語２&#13;検索語１&#13;検索語２"></textarea>
+  <div id ="flex">
+    <div id ="word_area">
+    <textarea id="word" rows="7" cols="40" placeholder="検索ワードを入力してください&#13;&#13;例：検索語１,検索語２&#13;検索語１&#13;検索語２"></textarea>
+    </div>
+    　　
+    <div id="droppable" class="noneactive">
+      おまけ：ここに検索ワードファイルを<br>ドロップ可能※UTF-8形式のみ
+    </div>
   </div>
-  　　
-  <div id="droppable" class="noneactive">
-    おまけ：ここに検索ワードファイルを<br>ドロップ可能※UTF-8形式のみ
-  </div>
-  <br><br><br><br>
   <br><input type="button" onclick="doHighlight()" value="入力された文字をハイライト">
   　　<input type="checkbox" name="color_variation_on" value="1" style="transform:scale(1.5);">色を検索語ごとに変える（12色まで、12色以降はループ）<br>
 	<br>
